@@ -15,52 +15,54 @@ import consolecalculator.calculator.Calculator;
  */
 public class Application {
 
-    private static final String FILE_INSTRUCTIONS = "instructions.txt";
+    /**
+     * Exit phrase
+     */
+    private static final String EXIT_PHRASE = "exit";
 
-    private static BufferedReader getReader(int reader) throws IOException {
-        switch (reader) {
-        case 1:
-            return new BufferedReader(new InputStreamReader(System.in));
-        case 2:
-            return Files.newBufferedReader(Paths.get(FILE_INSTRUCTIONS));
-        default:
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        try (BufferedReader reader = getReader(1)) {
-            String input = null;
+    /**
+     * Runs the application instance
+     */
+    public void run() {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(System.in))) {
+            String inBuffer = null;
 
             do {
                 try {
-                    System.out.print("Skriv in en ekvation, 'exit', eller 'help' för mer info: ");
-                    input = reader.readLine();
+                    System.out.printf("Enter an equation or '%s' to exit: ", EXIT_PHRASE);
+                    inBuffer = reader.readLine();
 
-                    if (input.equals("help")) {
-                        // TODO: Implement help command
-                    } else if (!input.equals("exit")) {
+                    if (!inBuffer.equals(EXIT_PHRASE)) {
                         try {
-                            System.out.println("Svar: " + Calculator.evalInput(input));
+                            System.out.println("Result: " + Calculator.evalInput(inBuffer));
                         } catch (ArithmeticException e) {
-                            System.out.println("Aritmetiskt error: " + e.getMessage());
+                            System.out.println("Arithmetic error: " + e.getMessage());
                         } catch (NumberFormatException e) {
-                            System.out.println("Syntaxfel! " + e.getMessage());
+                            System.out.println("Syntax error: " + e.getMessage());
                         } catch (IllegalArgumentException e) {
-                            System.out.println("Fel: " + e.getMessage());
+                            System.out.println("Error: " + e.getMessage());
                         } catch (RuntimeException e) {
-                            System.out.println("Fel: " + e.getMessage());
+                            System.out.println("Error: " + e.getMessage());
                         }
                     }
                 } catch (IOException e) {
-                    System.out.println("Error! Kunde inte läsa input!");
+                    System.out.println("Error! Could not read input!");
                 }
-
                 System.out.println();
-            } while (!input.equals("exit"));
+            } while (!inBuffer.equals(EXIT_PHRASE));
         } catch (IOException e) {
-            System.out.println("Error! Kunde inte läsa input fil!");
+            System.out.println("Input error!");
         }
+    }
+
+    /**
+     * Main function
+     *
+     * @param args Runtime arguments
+     */
+    public static void main(String[] args) {
+        Application app = new Application();
+        app.run(); 
     }
 
 }

@@ -13,14 +13,11 @@ import java.util.regex.Pattern;
 public class Calculator {
 
     @SuppressWarnings("serial")
-    private static HashMap<String, FunctionOperation> functions = new HashMap<String, FunctionOperation>() {
-
-        {
-            for (FunctionOperation func : FunctionOperation.values()) {
-                put(func.getIndex(), func);
-            }
+    private static HashMap<String, FunctionOperation> functions = new HashMap<String, FunctionOperation>() {{
+        for (FunctionOperation func : FunctionOperation.values()) {
+            put(func.getIndex(), func);
         }
-    };
+    }};
 
     /**
      * Evaluates a simple expression (a ? b ? c ? d...)
@@ -51,15 +48,15 @@ public class Calculator {
                 // Creates a new pattern for each separator
                 // Looks for the pattern a ? b
                 p = Pattern
-                        .compile(
-                                // Matches first number
-                                "(-?\\d+(?:\\.\\d+(?:E\\d+)?)?)("
-                                        // Only adds escape characters if separator is special character
-                                        + (!Character.isLetterOrDigit(separator) ? "\\" : "")
-                                        // Matches separator
-                                        + separator
-                                        // Matches second number
-                                        + ")(-?\\d+(?:\\.\\d+(?:E\\d+)?)?)");
+                    .compile(
+                            // Matches first number
+                            "(-?\\d+(?:\\.\\d+(?:E\\d+)?)?)("
+                            // Only adds escape characters if separator is special character
+                            + (!Character.isLetterOrDigit(separator) ? "\\" : "")
+                            // Matches separator
+                            + separator
+                            // Matches second number
+                            + ")(-?\\d+(?:\\.\\d+(?:E\\d+)?)?)");
                 m = p.matcher(sb.toString());
 
                 // Finds a single expression (a ? b)
@@ -71,7 +68,7 @@ public class Calculator {
 
                     // Replaces the indexes of the string found with the evaluated value
                     sb.replace(m.start(), m.end(), new BigDecimal(
-                            op.eval(a, b)).toPlainString());
+                                op.eval(a, b)).toPlainString());
 
                     // Tell the loop to keep looking
                     changed = true;
@@ -118,38 +115,38 @@ public class Calculator {
      */
     private static double fullEval(String input)
             throws NumberFormatException, IllegalArgumentException, RuntimeException {
-        input = "(" + input + ")";
-        StringBuilder outBuilder = new StringBuilder(input);
+            input = "(" + input + ")";
+            StringBuilder outBuilder = new StringBuilder(input);
 
-        // Parentheses and function pattern
-        Pattern p = Pattern.compile("(([a-zA-Z_]*)\\(([^\\(\\)]*)\\))+");
-        Matcher m = p.matcher(outBuilder.toString());
+            // Parentheses and function pattern
+            Pattern p = Pattern.compile("(([a-zA-Z_]*)\\(([^\\(\\)]*)\\))+");
+            Matcher m = p.matcher(outBuilder.toString());
 
-        String func, contents, replacement;
+            String func, contents, replacement;
 
-        while (m.find()) {
-            func = m.group(2);
-            contents = m.group(3);
+            while (m.find()) {
+                func = m.group(2);
+                contents = m.group(3);
 
-            // Checks if the selection is not a function
-            if (func.isEmpty()) {
-                replacement = Double.toString(simpleEval(contents));
-            } else {
-                // If a function is not found, throw an exception
-                if (!functions.containsKey(func)) {
-                    throw new RuntimeException(String.format("Function '%s' does not exist!", func));
+                // Checks if the selection is not a function
+                if (func.isEmpty()) {
+                    replacement = Double.toString(simpleEval(contents));
                 } else {
-                    replacement = new BigDecimal(functions.get(func).eval(argEval(contents))).toPlainString();
+                    // If a function is not found, throw an exception
+                    if (!functions.containsKey(func)) {
+                        throw new RuntimeException(String.format("Function '%s' does not exist!", func));
+                    } else {
+                        replacement = new BigDecimal(functions.get(func).eval(argEval(contents))).toPlainString();
+                    }
                 }
+
+                // Replaces the section with the evaluated value
+                outBuilder.replace(m.start(), m.end(), replacement);
+                // Refreshes matcher to match new string
+                m = p.matcher(outBuilder.toString());
             }
 
-            // Replaces the section with the evaluated value
-            outBuilder.replace(m.start(), m.end(), replacement);
-            // Refreshes matcher to match new string
-            m = p.matcher(outBuilder.toString());
-        }
-
-        return Double.parseDouble(outBuilder.toString());
+            return Double.parseDouble(outBuilder.toString());
     }
 
     /**
@@ -165,9 +162,9 @@ public class Calculator {
      */
     public static double evalInput(String in)
             throws ArithmeticException, NumberFormatException, IllegalArgumentException {
-        String formatted = in.replaceAll("\\s", "");
+            String formatted = in.replaceAll("\\s", "");
 
-        return fullEval(formatted);
+            return fullEval(formatted);
     }
 
 }
