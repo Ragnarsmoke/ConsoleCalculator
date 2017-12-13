@@ -1,6 +1,6 @@
 #!/bin/sh
 
-jarfile="./ConsoleCalculators.jar"
+jarfile="./ConsoleCalculator.jar"
 
 if [[ -s "$jarfile" ]]; then
     java -jar $jarfile
